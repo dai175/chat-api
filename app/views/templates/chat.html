@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>Chat</h1>
+        <form action="" onsubmit="sendMessage(event)">
+            <label>Chat Type: </label>
+            <select id="chatType">
+                <option value="group">Group Chat</option>
+                <option value="direct">Direct Chat</option>
+            </select>
+            <label>Room ID: </label>
+            <input type="text" id="roomId" autocomplete="off" value="foo"/>
+            <label>Receiver ID: </label>
+            <input type="text" id="receiverId" autocomplete="off" value="foo"/>
+            <button onclick="connect(event)">Connect</button>
+            <hr>
+            <label>Message: </label>
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            let ws = null;
+            function connect(event) {
+                const chatType = document.getElementById("chatType").value
+                if (chatType === "group") {
+                    const roomId = document.getElementById("roomId")
+                    ws = new WebSocket("ws://localhost:8000/group-chat/" + roomId.value + "?token={{ access_token }}");
+                } else {
+                    const receiverId = document.getElementById("receiverId")
+                    ws = new WebSocket("ws://localhost:8000/direct-chat/" + receiverId.value + "?token={{ access_token }}");
+                }
+                ws.onmessage = function(event) {
+                    let messages = document.getElementById('messages')
+                    let message = document.createElement('li')
+                    const content = document.createTextNode(event.data)
+                    message.appendChild(content)
+                    messages.appendChild(message)
+                };
+                event.preventDefault()
+            }
+            function sendMessage(event) {
+                let input = document.getElementById("messageText")
+                ws.send(input.value)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+        <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
+        <script>
+            const beamsClient = new PusherPushNotifications.Client({
+                instanceId: '{{ instance_id }}',
+            });
+
+            beamsClient.start()
+                .then(() => beamsClient.addDeviceInterest('{{ user_id }}'))
+                .then(() => console.log('Successfully registered and subscribed!'))
+                .catch(console.error);
+        </script>
+    </body>
+</html>

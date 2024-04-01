@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "chat-api"
+version = "0.1.0"
+description = ""
+authors = ["Daisuke Oba <dai175dai@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.110.0"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+websockets = "^12.0"
+sqlalchemy = "^2.0.29"
+psycopg2-binary = "^2.9.9"
+python-multipart = "^0.0.9"
+passlib = "^1.7.4"
+pyjwt = "^2.8.0"
+jinja2 = "^3.1.3"
+aiofiles = "^23.2.1"
+pusher-push-notifications = "^2.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.9.0"
+isort = "^5.13.2"
+black = "^24.3.0"
+flake8 = "^7.0.0"
+pytest = "^8.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line_length = 119
+
+[tool.isort]
+line_length = 119
+profile = "black"
+
+[tool.mypy]
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "passlib.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pusher_push_notifications.*"
+ignore_missing_imports = true
